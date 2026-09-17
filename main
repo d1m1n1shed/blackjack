@@ -1,0 +1,117 @@
+import random
+from math import trunc
+from operator import truediv
+
+
+class Players:
+    def __init__(self,name:str):
+        self.hand =[]
+        self.name = name
+
+DECKSIZE = 11
+
+player1 = Players("Player 1")
+player2 = Players("Player 2")
+
+players = []
+players.append(player1)
+players.append(player2)
+
+deck = []
+
+def checkHands():
+    for i,e in enumerate(players):
+        print(f"{players[i].name}'s hand is {e.hand}")
+
+def createDeck():
+    global deck
+    for i in range(DECKSIZE):
+        deck.append(i+1)
+    return deck
+
+def checkDeck():
+    global deck
+    # print("(from checkDeck()) Deck:")
+    # for i in range(len(deck)):
+    #     print(deck[i],end=" ")
+    # print("\n")
+    print(f"Deck:{deck}")
+
+def drawCard(player:Players):
+    global deck
+    if deck != []:
+        drewIndex = random.randint(0,len(deck)-1)
+        print(f"{player.name} draw card {deck[drewIndex]}")
+        player.hand.append(deck[drewIndex])
+        deck.pop(drewIndex)
+    else:
+        print("Deck is empty")
+    handMath(player)
+
+
+gameTurn = 0
+turn = 0
+def gameStart():
+    global players
+    global gameTurn
+    global turn
+    print("Game Started")
+    print(f"Created Deck: {createDeck()}\n")
+    gameTurn = 0
+    turn = 0
+
+
+def turnCount():
+    global turn
+    global gameTurn
+    if turn < len(players)-1:
+        turn += 1
+    else:
+        turn = 0
+        gameTurn += 1
+def handMath(player:Players):
+    global players
+    summation = 0
+    for i in player.hand:
+        summation += i
+    print(f"{player.name}'s hand is {summation}")
+    if summation > 21:
+        print(f"{player.name} is busted!")
+        gameOver(player)
+    else:
+        return
+
+def gameOver(player:Players):
+    global players
+    loser = player
+    print(f"{loser.name} lose!!")
+    for i in players:
+        if loser!= i:
+            print(f"{i.name} is the winner!")
+    exit()
+
+def action(player:Players):
+    global players
+    choice = input(f"{player.name} is playing Turn {gameTurn} : (H)it or (S)tand or (C)heck Info\n").lower()
+    if choice == "h":
+        print(f"{player.name} Hit")
+        drawCard(player)
+        turnCount()
+        print("\n")
+        return True
+    if choice == "s":
+        print(f"{player.name} Stand")
+        turnCount()
+        return
+    if choice == "c":
+        checkHands()
+        checkDeck()
+        handMath(player)
+    else:
+        return
+
+gameStart()
+
+while True:
+
+    action(players[turn])
